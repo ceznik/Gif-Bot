@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>I AM GIFBOT</title>
+	
+	<!-- reset css -->
+	<link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<body>
+	<div class="jumbotron">
+  		<h1>I am GifBot!!</h1>
+  		<p>My mission is to retrieve gifs from the web. Feel free to put words in my mouth.</p>
+  	</div>
+   	<div class="row">
+		<div class="col-md-4 gifbot"> 
+			<img src="assets/images/robot.jpg">
+			<input id="addGif" type="text">
+			<button type="button" class="btn btn-success" id="gif-generate">Generate</button>
+		</div>
+		<div class="col-md-8" id="gif-buttons">Gif buttons go here...</div>
+	</div>
+	<div class="row">
+		<div id="gif-container"></div>	
+	</div>
+
+	<!-- jQuery -->
+	<script src='http://code.jquery.com/jquery-2.1.3.min.js'></script>
+
+	<script type="text/javascript">
+	var gifButtons = ['Large Insects', 'Wedding Fails','Car Accidents']
+	for (var i = 0; i< gifButtons.length; i++){
+		var g = $('<button>')
+		g.addClass('gifys');
+		g.attr('data-name',gifButtons[i]);
+		g.text(gifButtons[i]);
+		$('#gif-buttons').append(g);
+	}
+	$( '#gif-generate' ).on('click', function(){
+		var gifInput = $("#addGif").val().trim();
+		gifButtons.push(gifInput);
+		$('#gif-buttons').append("<button class='gifys' data-name=" + gifInput + '>' + gifInput + '</button>');
+		$('#addGif').val("");
+
+	});
+	$(document).on('click', '.gifys', function(){
+		var term = $(this).data('name');
+		var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + term + "&api_key=dc6zaTOxFJmzC&limit=10";
+		$.ajax({
+			url: queryURL,
+			method: 'GET'
+		})
+		.done(function(response){
+			console.log(queryURL);
+			console.log(response);
+			var results = response.data;
+
+			for (i = 0; i < results.length; i++){
+				var newDiv = $('<div>');
+				var p = $('<p>').text("Rating: " + results[i].rating);
+				var newImage = $('<img>');
+				newImage.attr('src', results[i].images.fixed_height.url);
+
+				newDiv.append(p);
+				newDiv.append(newImage);
+
+				$('#gif-container').append(newDiv);
+			}
+		})
+	});
+	</script>
+
+</body>
+</html>
